@@ -59,8 +59,8 @@
 
 ## Infrastructure & Tooling (v0.2)
 
-### 4. Modular Architecture ⚪
-**Status**: Pending  
+### 4. Modular Architecture 🟡
+**Status**: In Progress
 **Priority**: 🔥 CRITICAL (Highest)  
 **Requirement File**: `requirements/pending/modular-architecture.md`  
 **Depends on**: None  
@@ -140,6 +140,22 @@
 
 **Estimated Effort**: 8-12 hours  
 **Why Important**: Systematizes requirement creation, reduces human error, enables LLM agent integration
+
+### 27. Debug PDF Preview ⚪
+**Status**: Pending
+**Priority**: High
+**Requirement File**: `requirements/pending/005-debug-pdf-preview.md`
+**Depends on**: #4
+**Blocks**: None
+
+**Requirements**:
+- [ ] Investigate `components/pdf-preview.js`
+- [ ] Check `datauristring` generation
+- [ ] Verify iframe interaction
+- [ ] Check browser console for errors
+
+**Estimated Effort**: 2-4 hours
+**Why Important**: The PDF preview is a core feature of the application and is currently broken.
 
 ---
 
@@ -414,38 +430,39 @@
 2. **#22** - Platform Portability (implement with #4)
 
 ### ⚠️ High Priority (Do Soon)
-3. **#5** - GitHub Pages Deployment
-4. **#24** - Requirements CLI Tool
-5. **#13** - Browser Compatibility Testing
+3. **#27** - Debug PDF Preview
+4. **#5** - GitHub Pages Deployment
+5. **#24** - Requirements CLI Tool
+6. **#13** - Browser Compatibility Testing
 
 ### ➡️ Medium Priority (Quick Wins)
-6. **#23** - LaTeX Syntax Highlighting (3-4 hours, big UX win)
-7. **#6** - Collapsible JSON Viewer
-8. **#12** - Error Handling
-9. **#21** - Bibliography Support
+7. **#23** - LaTeX Syntax Highlighting (3-4 hours, big UX win)
+8. **#6** - Collapsible JSON Viewer
+9. **#12** - Error Handling
+10. **#21** - Bibliography Support
 
 ### ⬇️ Medium-Low Priority
-10. **#8** - Better Math Rendering (large effort)
-11. **#7** - Advanced LaTeX Support
-12. **#16** - User Documentation
+11. **#8** - Better Math Rendering (large effort)
+12. **#7** - Advanced LaTeX Support
+13. **#16** - User Documentation
 
 ### ⬇️ Low Priority
-13. **#9** - PDF Styling Options
-14. **#10** - Editor Enhancements
-15. **#11** - JSON Export/Import
-16. **#19** - Template Library
+14. **#9** - PDF Styling Options
+15. **#10** - Editor Enhancements
+16. **#11** - JSON Export/Import
+17. **#19** - Template Library
 
 ---
 
 ## Statistics
 
-- **Total Requirements**: 26
-- **Completed**: 3 (12%)
-- **In Progress**: 0 (0%)
-- **Pending**: 22 (85%)
-- **Blocked**: 2 (8%)
+- **Total Requirements**: 27
+- **Completed**: 3 (11%)
+- **In Progress**: 1 (4%)
+- **Pending**: 21 (78%)
+- **Blocked**: 2 (7%)
 
-**Estimated Total Effort**: ~90-120 hours
+**Estimated Total Effort**: ~92-124 hours
 
 ---
 
@@ -461,6 +478,11 @@
 ---
 
 ## Changelog
+
+### 2026-01-05
+- Added #27: Debug PDF Preview (High Priority)
+- Updated #4: Modular Architecture to "In Progress" and unchecked sub-tasks.
+- Corrected requirement numbering to be stable.
 
 ### 2026-01-04
 - Created initial requirements document
