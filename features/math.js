@@ -1,10 +1,11 @@
 
-import { GREEK_LETTERS, MATH_OPERATORS } from '../utils/math-symbols.js';
+import { FeatureBase } from './feature-base.js';
 
-class MathFeature {
+export class MathFeature extends FeatureBase {
     constructor() {
+        super();
         this.name = 'math';
-        this.priority = 100;
+        this.priority = 50;
     }
 
     matches(line) {
@@ -12,52 +13,57 @@ class MathFeature {
     }
 
     parse(line) {
-        const inlineMathRegex = /\\$(.+?)\\$/g;
-        let match;
-        const content = [];
-
-        while ((match = inlineMathRegex.exec(line)) !== null) {
-            content.push({
+        // Handle display math $$...$$
+        const displayMatch = line.match(/^\s*\$\$(.+?)\$\$\s*$/);
+        if (displayMatch) {
+            return {
                 type: 'math',
-                content: this.parseMathContent(match[1]),
-                display: 'inline'
+                display: 'block',
+                content: displayMatch[1].trim()
+            };
+        }
+
+        // Handle inline math $...$
+        const inlineRegex = /\$(.+?)\$/g;
+        let match;
+        const nodes = [];
+        let lastIndex = 0;
+
+        while ((match = inlineRegex.exec(line)) !== null) {
+            // Add text before the math segment
+            if (match.index > lastIndex) {
+                nodes.push({ type: 'text', content: line.substring(lastIndex, match.index) });
+            }
+            // Add the math segment
+            nodes.push({
+                type: 'math',
+                display: 'inline',
+                content: match[1].trim()
             });
+            lastIndex = match.index + match[0].length;
         }
 
-        if (content.length === 0) {
-            const displayMathRegex = /\\$\\$(.+?)\\$\\$/g;
-            match = displayMathRegex.exec(line);
-            if (match) {
-                content.push({
-                    type: 'math',
-                    content: this.parseMathContent(match[1]),
-                    display: 'block'
-                });
-            }
+        // Add any remaining text after the last math segment
+        if (lastIndex < line.length) {
+            nodes.push({ type: 'text', content: line.substring(lastIndex) });
         }
 
-        return content.length > 0 ? content[0] : null;
-    }
+        // If only one node was found, and it's a math node, return it directly.
+        // Otherwise, return a paragraph-like structure containing the mixed content.
+        if (nodes.length === 1 && nodes[0].type === 'math') {
+            return nodes[0];
+        } else if (nodes.length > 0) {
+            return { type: 'paragraph', content: nodes };
+        }
 
-    parseMathContent(math) {
-        return math.replace(/\\([a-zA-Z]+)/g, (match, command) => {
-            if (GREEK_LETTERS[command]) {
-                return GREEK_LETTERS[command];
-            }
-            if (MATH_OPERATORS[command]) {
-                return MATH_OPERATORS[command];
-            }
-            return match;
-        });
-    }
-
-    render(element, pdfGenerator) {
-        pdfGenerator.renderMath(element);
+        return null;
     }
 
     canRender(elementType) {
         return elementType === 'math';
     }
-}
 
-export const mathFeature = new MathFeature();
+    render(element, pdfGenerator) {
+        pdfGenerator.renderMath(element);
+    }
+}

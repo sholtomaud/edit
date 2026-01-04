@@ -1,3 +1,4 @@
+
 import { featureRegistry } from './feature-registry.js';
 import { MathRenderer } from './math-renderer.js';
 
@@ -6,6 +7,7 @@ export class PDFGenerator {
         this.doc = null;
         this.mathRenderer = null;
         this.y = 20;
+        this.x = 20;
         this.pageWidth = 210; // A4 width in mm
         this.margin = 20;
     }
@@ -21,6 +23,7 @@ export class PDFGenerator {
         this.doc = new jsPDF();
         this.mathRenderer = new MathRenderer(this);
         this.y = 20;
+        this.x = this.margin;
 
         const makeTitleElement = jsonData.content.find(el => el.type === 'maketitle');
         if (makeTitleElement) {
@@ -54,6 +57,7 @@ export class PDFGenerator {
     }
 
     renderElement(element) {
+        this.x = this.margin;
         const feature = featureRegistry.findFeatureForElement(element);
 
         if (feature) {
@@ -78,122 +82,50 @@ export class PDFGenerator {
     renderParagraph(element) {
         this.doc.setFontSize(12);
         this.doc.setFont(undefined, 'normal');
-        const content = element.content;
+        this.x = this.margin;
+        const lineHeight = 7;
 
-        if (typeof content === 'string') {
-            const lines = this.doc.splitTextToSize(content, this.pageWidth - 2 * this.margin);
-            for (const line of lines) {
-                this.checkPageBreak(7);
-                this.doc.text(line, this.margin, this.y);
-                this.y += 7;
-            }
-        } else if (typeof content === 'object' && content !== null) {
-            this.renderFormattedText(content, this.margin, this.margin);
-            this.y += 7;
-        } else {
-            console.warn('Unsupported paragraph content format:', content);
-        }
-
-        this.y += 5;
-    }
-
-    renderFormattedText(content, startX, wrapX) {
-        let currentX = startX;
-        const text = content.text || '';
-        const formats = content.formats || [];
-        const segments = this.segmentize(text, formats);
-
-        this.checkPageBreak(7);
-
-        for (const segment of segments) {
-            this.doc.setFont(undefined, this.getFontStyle(segment.type));
-            const words = segment.text.split(/(\\s+)/);
-
-            for (const word of words) {
-                if (!word) continue;
-                const wordWidth = this.doc.getTextWidth(word);
-
-                if (currentX > wrapX && currentX + wordWidth > this.pageWidth - this.margin) {
-                    this.y += 7;
-                    this.checkPageBreak(7);
-                    currentX = wrapX;
+        for (const node of element.content) {
+            if (node.type === 'text') {
+                const words = node.content.split(' ');
+                for (const word of words) {
+                    const wordWidth = this.doc.getTextWidth(word + ' ');
+                    if (this.x + wordWidth > this.pageWidth - this.margin) {
+                        this.y += lineHeight;
+                        this.x = this.margin;
+                    }
+                    this.doc.text(word, this.x, this.y);
+                    this.x += wordWidth;
                 }
-
-                this.doc.text(word, currentX, this.y);
-                currentX += wordWidth;
+            } else if (node.type === 'math') {
+                this.mathRenderer.render(node, this.x, this.y);
+                this.x += this.mathRenderer.getWidth(this.mathRenderer.parse(node.content), 12) + 2;
             }
         }
-    }
-
-    segmentize(text, formats) {
-        const segments = [];
-        let lastIndex = 0;
-
-        formats.sort((a, b) => {
-            const indexA = text.indexOf(a.content);
-            const indexB = text.indexOf(b.content);
-            if (indexA === -1) return 1;
-            if (indexB === -1) return -1;
-            return indexA - indexB;
-        });
-
-        for (const format of formats) {
-            const index = text.indexOf(format.content);
-            if (index === -1) continue;
-
-            if (index > lastIndex) {
-                segments.push({ text: text.substring(lastIndex, index), type: 'normal' });
-            }
-            segments.push({ text: format.content, type: format.type });
-            lastIndex = index + format.content.length;
-        }
-
-        if (lastIndex < text.length) {
-            segments.push({ text: text.substring(lastIndex), type: 'normal' });
-        }
-        return segments;
-    }
-
-    getFontStyle(type) {
-        switch (type) {
-            case 'bold': return 'bold';
-            case 'italic': return 'italic';
-            case 'math': return 'italic';
-            default: return 'normal';
-        }
+        this.y += lineHeight;
+        this.y += 5; // Paragraph spacing
     }
 
     renderList(element) {
         this.doc.setFontSize(12);
 
-        element.items.forEach((item) => {
+        element.items.forEach((item, index) => {
             this.checkPageBreak(7);
-            const bullet = element.ordered ? `${element.items.indexOf(item) + 1}. ` : '• ';
-            const itemX = this.margin + 5 + this.doc.getTextWidth(bullet);
+            const bullet = element.ordered ? `${index + 1}. ` : '• ';
+            const itemX = this.margin + 5;
+            this.doc.text(bullet, itemX, this.y);
 
-            if (typeof item === 'string') {
-                const lines = this.doc.splitTextToSize(item, this.pageWidth - this.margin - itemX);
-                for (let i = 0; i < lines.length; i++) {
-                    if (i > 0) this.y += 7;
-                    this.doc.text(lines[i], itemX, this.y);
-                }
-            } else if (typeof item === 'object' && item !== null) {
-                this.renderFormattedText(item, itemX, itemX);
+            const contentX = itemX + this.doc.getTextWidth(bullet);
+            const lines = this.doc.splitTextToSize(item, this.pageWidth - contentX - this.margin);
+
+            for (let i = 0; i < lines.length; i++) {
+                if (i > 0) this.y += 7;
+                this.doc.text(lines[i], contentX, this.y);
             }
             this.y += 7;
-            this.doc.text(bullet, this.margin + 5, this.y);
-
         });
 
         this.y += 5;
-    }
-
-    renderEquation(element) {
-        this.doc.setFontSize(12);
-        this.doc.setFont(undefined, 'italic');
-        this.doc.text(element.content, this.pageWidth / 2, this.y, { align: 'center' });
-        this.doc.setFont(undefined, 'normal');
-        this.y += 15;
     }
 
     renderMath(element) {
@@ -201,9 +133,9 @@ export class PDFGenerator {
     }
 
     checkPageBreak(height) {
-        if (this.y + height > 280) {
+        if (this.y + height > 280) { // 297mm A4 height - 17mm margin
             this.doc.addPage();
-            this.y = 20;
+            this.y = this.margin;
         }
     }
 }

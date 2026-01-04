@@ -22,6 +22,11 @@ export const MATH_OPERATORS = {
   'sum': '∑', 'prod': '∏', 'int': '∫',
   'partial': '∂', 'nabla': '∇', 'infty': '∞',
   'pm': '±', 'times': '×', 'div': '÷',
-  'leq': '≤', 'geq': '≥', 'neq': '≠',
-  'approx': '≈', 'cdot': '·',
+  'neq': '≠', 'leq': '≤', 'geq': '≥',
+  'approx': '≈', 'equiv': '≡', 'prop': '∝',
+  'cdot': '·', 'circ': '∘', 'bullet': '•',
+  'oplus': '⊕', 'otimes': '⊗', 'forall': '∀',
+  'exists': '∃', 'in': '∈', 'notin': '∉',
+  'subset': '⊂', 'supset': '⊃', 'subseteq': '⊆',
+  'supseteq': '⊇', 'cap': '∩', 'cup': '∪',
 };
