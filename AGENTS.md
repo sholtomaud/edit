@@ -1,81 +1,72 @@
-# AGENTS.md - LLM Development Guide
-
+AGENTS.md - LLM Development Guide
 This document provides instructions for AI assistants (LLMs) working on the LaTeX PDF Editor project. Follow these guidelines when implementing features, fixing bugs, or refactoring code.
 
-## Project Overview
+Project Overview
+Purpose: A browser-based LaTeX editor that parses LaTeX into JSON and renders PDFs client-side.
 
-**Purpose**: A browser-based LaTeX editor that parses LaTeX into JSON and renders PDFs client-side.
+Tech Stack: Native Web Components, Vanilla JavaScript (ES6+), Monaco Editor, jsPDF
 
-**Tech Stack**: Native Web Components, Vanilla JavaScript (ES6+), Monaco Editor, jsPDF
+Architecture: Modular component-based system with event-driven communication.
 
-**Architecture**: Modular component-based system with event-driven communication.
-
-## Critical Constraints
-
-### MUST Follow
-1. **No Third-Party Libraries** except:
-   - Monaco Editor (for code editing)
-   - jsPDF (for PDF generation)
-   
-2. **Native Web Components Only**
-   - No React, Vue, Angular, Svelte, etc.
-   - Use `customElements.define()`
-   - Use Shadow DOM where appropriate
-   
-3. **No Build Tools**
-   - No Webpack, Vite, Parcel, Rollup
-   - No transpilation (write ES6+ that runs natively)
-   - No npm packages beyond the two allowed
-   
-4. **No Browser Storage APIs**
-   - No localStorage or sessionStorage
-   - Store state in-memory using StateManager
-   - State resets on page reload (this is expected behavior)
-
-5. **ES6 Modules Only**
-   - Use `import/export` syntax
-   - Type="module" in script tags
-   - Relative paths for imports
-
-### Code Style
-- Use concise variable names (`i`, `j`, `el`, `e`)
-- Prefer functional patterns where appropriate
-- Keep functions small and focused
-- Comment complex logic only
-
-## Project Structure
-
-```
+Critical Constraints
+MUST Follow
+No Third-Party Libraries except:
+Monaco Editor (for code editing)
+jsPDF (for PDF generation)
+Native Web Components Only
+No React, Vue, Angular, Svelte, etc.
+Use customElements.define()
+Use Shadow DOM where appropriate
+No Build Tools
+No Webpack, Vite, Parcel, Rollup
+No transpilation (write ES6+ that runs natively)
+No npm packages beyond the two allowed
+No Browser Storage APIs
+No localStorage or sessionStorage
+Store state in-memory using StateManager
+State resets on page reload (this is expected behavior)
+ES6 Modules Only
+Use import/export syntax
+Type="module" in script tags
+Relative paths for imports
+Code Style
+Use concise variable names (i, j, el, e)
+Prefer functional patterns where appropriate
+Keep functions small and focused
+Comment complex logic only
+Project Structure
 latex-pdf-editor/
-├── index.html              # Entry point - minimal, loads app-shell
-├── styles/                 # CSS files (no preprocessors)
-│   ├── main.css           # CSS variables, resets
-│   ├── toolbar.css        # Toolbar styles
-│   ├── editor-pane.css    # Editor pane styles
-│   └── layout.css         # Grid/flex layouts
-├── components/            # Web Components (one per file)
-│   ├── app-shell.js       # Main container
-│   ├── latex-editor.js    # Monaco wrapper
-│   ├── json-viewer.js     # JSON display
-│   ├── pdf-preview.js     # PDF viewer
-│   ├── toolbar.js         # Action buttons
-│   └── status-bar.js      # Status messages
-├── services/              # Business logic (no UI)
-│   ├── latex-parser.js    # LaTeX → JSON
-│   ├── pdf-generator.js   # JSON → PDF
-│   ├── state-manager.js   # Global state
-│   └── event-bus.js       # Pub/sub events
-├── utils/                 # Helper functions
-│   ├── monaco-loader.js   # Monaco setup
-│   └── library-loader.js  # External libs
-├── config/                # Configuration files
-│   ├── latex-examples.js  # Sample docs
-│   └── parser-config.js   # Parser rules
-└── requirements/          # Feature specifications
-    ├── REQUIREMENTS.md    # Master list
-    ├── completed/         # Done features
-    └── pending/           # Todo features
-```
+├── index.html # Entry point - minimal, loads app-shell
+├── styles/ # CSS files (no preprocessors)
+│ ├── main.css # CSS variables, resets
+│ ├── toolbar.css # Toolbar styles
+│ ├── editor-pane.css # Editor pane styles
+│ └── layout.css # Grid/flex layouts
+├── components/ # Web Components (one per file)
+│ ├── app-shell.js # Main container
+│ ├── latex-editor.js # Monaco wrapper
+│ ├── json-viewer.js # JSON display
+│ ├── pdf-preview.js # PDF viewer
+│ ├── toolbar.js # Action buttons
+│ └── status-bar.js # Status messages
+├── services/ # Business logic (no UI)
+│ ├── latex-parser.js # LaTeX → JSON
+│ ├── pdf-generator.js # JSON → PDF
+│ ├── state-manager.js # Global state
+│ └── event-bus.js # Pub/sub events
+├── utils/ # Helper functions
+│ ├── monaco-loader.js # Monaco setup
+│ └── library-loader.js # External libs
+├── config/ # Configuration files
+│ ├── latex-examples.js # Sample docs
+│ └── parser-config.js # Parser rules
+└── requirements/ # Feature specifications
+├── REQUIREMENTS.md # Master list (Source of Truth)
+├── pending/ # Todo features
+├── completed/ # Done features
+└── blocked/ # Blocked features
+
+
 
 ## Development Workflow
 
@@ -93,14 +84,13 @@ When given a requirement file (e.g., `requirements/pending/collapsible-json.md`)
 
 **Step-by-step process:**
 
-```
-1. Create/modify the component file
-2. Update related CSS if needed
-3. Update state-manager if new state is needed
-4. Add event handlers if components need to communicate
-5. Test the feature mentally (walk through user flow)
-6. Document any new patterns or decisions
-```
+Create/modify the component file
+Update related CSS if needed
+Update state-manager if new state is needed
+Add event handlers if components need to communicate
+Test the feature mentally (walk through user flow)
+Document any new patterns or decisions
+
 
 **Component Template:**
 
@@ -165,11 +155,10 @@ export class ExampleComponent extends HTMLElement {
 }
 
 customElements.define('example-component', ExampleComponent);
-```
+Service Template:
 
-**Service Template:**
+javascript
 
-```javascript
 // services/example-service.js
 
 export class ExampleService {
@@ -191,11 +180,9 @@ export class ExampleService {
 
 // Export singleton instance
 export const exampleService = new ExampleService();
-```
+3. Using State Management
+javascript
 
-### 3. Using State Management
-
-```javascript
 import { stateManager } from '../services/state-manager.js';
 
 // Get current state
@@ -213,11 +200,9 @@ const unsubscribe = stateManager.subscribe((newState) => {
 
 // Later: unsubscribe
 unsubscribe();
-```
+4. Using Event Bus
+javascript
 
-### 4. Using Event Bus
-
-```javascript
 import { eventBus } from '../services/event-bus.js';
 
 // Emit event
@@ -227,107 +212,100 @@ eventBus.emit('latex:parsed', { data: parsedJson });
 eventBus.on('latex:parsed', (payload) => {
   console.log('LaTeX parsed:', payload.data);
 });
-```
-
-### 5. Common Event Names
-
+5. Common Event Names
 Use these standardized event names:
 
-- `latex:changed` - LaTeX content changed
-- `latex:parsed` - LaTeX parsed to JSON
-- `pdf:generated` - PDF generated
-- `pdf:downloaded` - PDF download triggered
-- `error:occurred` - Error happened
-- `ui:notification` - Show user notification
+latex:changed - LaTeX content changed
+latex:parsed - LaTeX parsed to JSON
+pdf:generated - PDF generated
+pdf:downloaded - PDF download triggered
+error:occurred - Error happened
+ui:notification - Show user notification
+Working with Requirements
+The requirements/ directory acts as the single source of truth for project status. You must keep these files synchronized with any code changes.
 
-## Working with Requirements
+Reading a Requirement File
+Example: requirements/pending/collapsible-json.md
 
-### Reading a Requirement File
-
-Example: `requirements/pending/collapsible-json.md`
-
-```markdown
-# Feature: Collapsible JSON Viewer
-
-## Objective
+Feature: Collapsible JSON Viewer
+Objective
 Make the JSON output panel collapsible and collapsed by default.
 
-## Requirements
-- Panel should be collapsed on page load
-- Toggle button in panel header
-- Smooth animation when expanding/collapsing
-- Remember state in session
-
-## Affected Files
-- `components/json-viewer.js`
-- `styles/editor-pane.css`
-
-## Acceptance Criteria
-- [ ] Panel is collapsed by default
-- [ ] Clicking header toggles visibility
-- [ ] Animation is smooth (300ms)
-- [ ] State persists during session
-
-## Implementation Notes
+Requirements
+Panel should be collapsed on page load
+Toggle button in panel header
+Smooth animation when expanding/collapsing
+Remember state in session
+Affected Files
+components/json-viewer.js
+styles/editor-pane.css
+Acceptance Criteria
+ Panel is collapsed by default
+ Clicking header toggles visibility
+ Animation is smooth (300ms)
+ State persists during session
+Implementation Notes
 Use CSS transitions, store state in component property
-```
 
-### Creating a New Requirement
+Creating a New Requirement
+When asked to add a feature or proposing a new feature:
 
-When asked to add a feature:
+Create requirement file: requirements/pending/feature-name.md
+Use this template:
+Feature: [Feature Name]
+Requirement ID: #[Next Number]Priority: Medium | High | LowStatus: ⚪ PendingCreated: YYYY-MM-DD
 
-1. **Create requirement file**: `requirements/pending/feature-name.md`
-2. **Use this template**:
-
-```markdown
-# Feature: [Feature Name]
-
-## Objective
+Objective
 [Clear, concise description of what this feature does]
 
-## Requirements
-- [Requirement 1]
-- [Requirement 2]
-- [Requirement 3]
-
-## Affected Files
-- `path/to/file1.js`
-- `path/to/file2.css`
-
-## Acceptance Criteria
-- [ ] Criterion 1
-- [ ] Criterion 2
-- [ ] Criterion 3
-
-## Implementation Notes
+Requirements
+[Requirement 1]
+[Requirement 2]
+Affected Files
+path/to/file1.js
+path/to/file2.css
+Acceptance Criteria
+ Criterion 1
+ Criterion 2
+Implementation Notes
 [Technical details, edge cases, design decisions]
 
-## Dependencies
-[List any requirements that must be completed first]
+Dependencies
+[List any requirement IDs that must be completed first]
 
-## Testing Checklist
-- [ ] Feature works in Chrome
-- [ ] Feature works in Firefox
-- [ ] Feature works in Safari
-- [ ] No console errors
-- [ ] Meets accessibility standards
-```
+Testing Checklist
+ Feature works in Chrome
+ Feature works in Firefox
+ Feature works in Safari
+Update REQUIREMENTS.md: Add the new requirement to the master list immediately.
+Updating Requirements (Synchronization)
+Crucial: Code changes often invalidate or update existing requirements. You must actively search for and update related requirement files.
 
-### Completing a Requirement
-
+When Modifying Core Files:
+Before modifying a file (e.g., services/state-manager.js), scan requirements/pending/ and requirements/blocked/.
+Find all requirements listing that file in Affected Files.
+Update the Implementation Notes or Acceptance Criteria in those files if the code change impacts their implementation strategy.
+When Completing a Dependency:
+If you complete Requirement #5, and Requirement #12 lists #5 in Dependencies, update Requirement #12.
+Remove #5 from dependencies if it is fully satisfied, or update notes.
+Status Hygiene:
+Ensure the status in REQUIREMENTS.md always matches the physical location of the file (e.g., if in completed/, status must be 🟢).
+Never leave orphaned entries in REQUIREMENTS.md.
+Completing a Requirement
 After implementation:
 
-1. **Move file**: `requirements/pending/feature.md` → `requirements/completed/feature.md`
-2. **Update REQUIREMENTS.md**: Change status from ⚪ to 🟢
-3. **Add completion date**: Add date to completed requirement file
+Verify: Ensure all acceptance criteria are met.
+Update File:
+Change status in REQUIREMENTS.md from ⚪ to 🟢.
+Add completion date to the requirement file.
+Move File: requirements/pending/feature.md → requirements/completed/feature.md.
+Clean Up: Remove from pending/ or blocked/ directories.
+Common Patterns
+Pattern 1: Adding a New LaTeX Command
+File: services/latex-parser.js
 
-## Common Patterns
+javascript
 
-### Pattern 1: Adding a New LaTeX Command
-
-**File**: `services/latex-parser.js`
-
-```javascript
 parseContent(content) {
   // ... existing code ...
   
@@ -340,11 +318,10 @@ parseContent(content) {
     });
   }
 }
-```
+File: services/pdf-generator.js
 
-**File**: `services/pdf-generator.js`
+javascript
 
-```javascript
 renderElement(element) {
   // ... existing switch cases ...
   
@@ -356,24 +333,21 @@ renderElement(element) {
 renderCustomCommand(element) {
   // Rendering logic
 }
-```
+Pattern 2: Adding UI State
+File: services/state-manager.js
 
-### Pattern 2: Adding UI State
+javascript
 
-**File**: `services/state-manager.js`
-
-```javascript
 constructor() {
   this.state = {
     // ... existing state ...
     newFeatureEnabled: false, // Add new state
   };
 }
-```
+File: Component using state
 
-**File**: Component using state
+javascript
 
-```javascript
 connectedCallback() {
   this.unsubscribe = stateManager.subscribe((state) => {
     if (state.newFeatureEnabled !== this.lastState) {
@@ -382,13 +356,11 @@ connectedCallback() {
     }
   });
 }
-```
+Pattern 3: Adding a Toolbar Button
+File: components/toolbar.js
 
-### Pattern 3: Adding a Toolbar Button
+javascript
 
-**File**: `components/toolbar.js`
-
-```javascript
 render() {
   this.shadowRoot.innerHTML = `
     <style>/* styles */</style>
@@ -406,21 +378,18 @@ attachEventListeners() {
       eventBus.emit('action:new', {});
     });
 }
-```
-
-## Debugging Guidelines
-
+Debugging Guidelines
 When encountering errors:
 
-1. **Check console**: Always check browser console first
-2. **Verify imports**: Ensure all imports use correct paths
-3. **Check definitions**: Verify custom elements are defined
-4. **State inspection**: Log state to verify data flow
-5. **Event flow**: Log events to trace communication
+Check console: Always check browser console first
+Verify imports: Ensure all imports use correct paths
+Check definitions: Verify custom elements are defined
+State inspection: Log state to verify data flow
+Event flow: Log events to trace communication
+Common Issues:
 
-**Common Issues:**
+javascript
 
-```javascript
 // ❌ Wrong: absolute path
 import { parser } from '/services/latex-parser.js';
 
@@ -432,76 +401,67 @@ import { parser } from '../services/latex-parser';
 
 // ✅ Correct: include .js
 import { parser } from '../services/latex-parser.js';
-```
-
-## Response Format
-
+Response Format
 When implementing a requirement, structure your response as:
 
-```markdown
 I'll implement [feature name] as specified in [requirement file].
 
-## Changes Made
+Changes Made
+1. [Component/Service Name]
+File: path/to/file.jsChanges:
 
-### 1. [Component/Service Name]
-**File**: `path/to/file.js`
-**Changes**:
-- Added [change 1]
-- Modified [change 2]
-
+Added [change 1]
+Modified [change 2]
 [Code block with full updated file or key changes]
 
-### 2. [Style Updates]
-**File**: `path/to/file.css`
-**Changes**:
-- Added [style 1]
+2. [Style Updates]
+File: path/to/file.cssChanges:
 
+Added [style 1]
 [Code block with CSS changes]
 
-## Testing
-
+Requirements Updates
+Updated status in REQUIREMENTS.md to 🟢
+Moved requirements/pending/feature.md to requirements/completed/
+Verified dependencies: None remaining.
+Testing
 To verify:
-1. [Test step 1]
-2. [Test step 2]
-3. [Expected result]
 
-## Next Steps
-
-- [ ] Move requirement to completed/
-- [ ] Update REQUIREMENTS.md status
-- [ ] Test in multiple browsers
-```
-
-## Questions to Ask
-
+[Test step 1]
+[Test step 2]
+[Expected result]
+Next Steps
+ Move requirement to completed/
+ Update REQUIREMENTS.md status
+ Test in multiple browsers
+Questions to Ask
 Before implementing, confirm:
 
-1. **Scope**: "Should this feature also handle [edge case]?"
-2. **Design**: "Should the UI follow [pattern A] or [pattern B]?"
-3. **Priority**: "Are there any blocking requirements?"
-4. **Integration**: "Does this affect existing features?"
-
-## Final Checklist
-
+Scope: "Should this feature also handle [edge case]?"
+Design: "Should the UI follow [pattern A] or [pattern B]?"
+Priority: "Are there any blocking requirements?"
+Integration: "Does this affect existing features?"
+Final Checklist
 Before marking a requirement as complete:
 
-- [ ] All acceptance criteria met
-- [ ] No console errors
-- [ ] Code follows project patterns
-- [ ] Events properly emitted/handled
-- [ ] State updates correctly
-- [ ] Component cleanup implemented
-- [ ] Comments added for complex logic
-- [ ] No third-party libraries added
-- [ ] No localStorage/sessionStorage used
-- [ ] Works without build step
-
-## Getting Help
-
+ All acceptance criteria met
+ No console errors
+ Code follows project patterns
+ Events properly emitted/handled
+ State updates correctly
+ Component cleanup implemented
+ Comments added for complex logic
+ No third-party libraries added
+ No localStorage/sessionStorage used
+ Works without build step
+ REQUIREMENTS.md updated
+ All related requirement files checked and updated
+Getting Help
 If you're unsure about:
-- Architecture decisions → Review existing similar components
-- Naming conventions → Check existing code patterns
-- Event names → See "Common Event Names" section
-- State structure → Review state-manager.js
 
-Remember: **When in doubt, ask the human developer for clarification before implementing.**
+Architecture decisions → Review existing similar components
+Naming conventions → Check existing code patterns
+Event names → See "Common Event Names" section
+State structure → Review state-manager.js
+Requirement impacts → Search requirements/ for file references
+Remember: When in doubt, ask the human developer for clarification before implementing.
