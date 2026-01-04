@@ -1,0 +1,84 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/http/server.py", line 1314, in <module>
+    test(
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/http/server.py", line 1261, in test
+    with ServerClass(addr, HandlerClass) as httpd:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/socketserver.py", line 457, in __init__
+    self.server_bind()
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/http/server.py", line 1308, in server_bind
+    return super().server_bind()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/http/server.py", line 136, in server_bind
+    socketserver.TCPServer.server_bind(self)
+  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/socketserver.py", line 478, in server_bind
+    self.socket.bind(self.server_address)
+OSError: [Errno 98] Address already in use
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /main.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /styles/main.css HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /features/metadata.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /features/sections.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /services/feature-registry.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /features/formatting.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /features/equations.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /features/lists.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /components/app-shell.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /features/feature-base.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /utils/parser-utils.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /services/state-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /components/pdf-preview.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /services/event-bus.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /components/toolbar.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /components/latex-editor.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /components/json-viewer.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /components/status-bar.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /services/latex-parser.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /services/pdf-generator.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:17] "GET /utils/monaco-loader.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /styles/main.css HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /main.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /features/sections.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /features/formatting.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /features/equations.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /features/metadata.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /services/feature-registry.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /features/lists.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /components/app-shell.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /features/feature-base.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /utils/parser-utils.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /components/json-viewer.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /services/event-bus.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /components/toolbar.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /components/pdf-preview.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /components/latex-editor.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /services/state-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /components/status-bar.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /services/latex-parser.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /services/pdf-generator.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:56:45] "GET /utils/monaco-loader.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:08] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:08] "GET /styles/main.css HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:08] "GET /main.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:08] "GET /services/feature-registry.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:08] "GET /features/equations.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /features/lists.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /features/sections.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /components/app-shell.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /features/metadata.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /features/formatting.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /features/feature-base.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /utils/parser-utils.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /components/json-viewer.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /components/latex-editor.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /components/pdf-preview.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /services/state-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /services/event-bus.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /components/toolbar.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /components/status-bar.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /utils/monaco-loader.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /services/latex-parser.js HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jan/2026 08:58:09] "GET /services/pdf-generator.js HTTP/1.1" 200 -
