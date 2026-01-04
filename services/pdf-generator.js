@@ -1,8 +1,10 @@
 import { featureRegistry } from './feature-registry.js';
+import { MathRenderer } from './math-renderer.js';
 
 export class PDFGenerator {
     constructor() {
         this.doc = null;
+        this.mathRenderer = null;
         this.y = 20;
         this.pageWidth = 210; // A4 width in mm
         this.margin = 20;
@@ -17,6 +19,7 @@ export class PDFGenerator {
 
         const { jsPDF } = window.jspdf;
         this.doc = new jsPDF();
+        this.mathRenderer = new MathRenderer(this);
         this.y = 20;
 
         const makeTitleElement = jsonData.content.find(el => el.type === 'maketitle');
@@ -191,6 +194,10 @@ export class PDFGenerator {
         this.doc.text(element.content, this.pageWidth / 2, this.y, { align: 'center' });
         this.doc.setFont(undefined, 'normal');
         this.y += 15;
+    }
+
+    renderMath(element) {
+        this.mathRenderer.render(element);
     }
 
     checkPageBreak(height) {
