@@ -1,144 +1,476 @@
-# Requirements Files Status
+# LaTeX PDF Editor - Requirements
 
-## Overview
-This document tracks all requirement files that should exist based on REQUIREMENTS.md
+## Status Legend
+- 🟢 Completed
+- 🟡 In Progress  
+- 🔴 Blocked
+- ⚪ Pending
 
-## ✅ Generated Requirement Files
+## Version History
 
-### Critical Priority
-- [x] **modular-architecture.md** (#4) - 🔥 HIGHEST PRIORITY
-  - Plugin-based parser and renderer
-  - Extensible feature system
-  - Web Components architecture
-  - Location: `requirements/pending/`
+- **v0.1** (Initial) - Basic parsing and PDF generation
+- **v0.2** (Current) - Modular refactor and tooling
 
-### High Priority  
-- [x] **github-pages-deployment.md** (#5)
-  - GitHub Actions workflow
-  - Automated deployment
-  - Location: `requirements/pending/`
+---
 
-### Medium-High Priority
-- [x] **bibliography-support.md** (#21) - NEW
-  - BibTeX/BibLaTeX parsing
-  - Citation commands (`\cite`, `\citep`, `\citet`)
-  - Multiple citation styles (APA, MLA, Chicago, etc.)
-  - Location: `requirements/pending/`
+## Core Features
 
-### Medium Priority
-- [x] **collapsible-json-viewer.md** (#6)
-  - Collapsed by default
-  - Smooth animations
-  - Location: `requirements/pending/`
+### 1. LaTeX Parsing (v0.1) 🟢
+**Status**: Completed  
+**Priority**: High  
+**Completion Date**: 2026-01-04
 
-- [x] **better-math-support.md** (#8)
-  - Custom math renderer
-  - Greek letters, fractions, matrices
-  - Location: `requirements/pending/`
+- [x] Document metadata extraction (title, author, date)
+- [x] Section and subsection parsing
+- [x] Paragraph text with inline formatting
+- [x] Bold text (`\textbf{}`)
+- [x] Italic text (`\textit{}`)
+- [x] Inline math (`$...$`)
+- [x] Numbered equations (`\begin{equation}`)
+- [x] Unordered lists (`\begin{itemize}`)
+- [x] Ordered lists (`\begin{enumerate}`)
 
-### Low Priority
-- [x] **custom-styling.md** (#9)
-  - PDF style customization
-  - Font, color, spacing options
-  - Style presets
-  - Location: `requirements/pending/`
+### 2. PDF Generation (v0.1) 🟢
+**Status**: Completed  
+**Priority**: High  
+**Completion Date**: 2026-01-04
 
-## ⚠️ Requirements Without Detail Files
+- [x] Title page rendering
+- [x] Section hierarchy
+- [x] Paragraph text wrapping
+- [x] List rendering (bullets and numbers)
+- [x] Basic equation display
+- [x] Automatic page breaks
+- [x] PDF download functionality
 
-These are listed in REQUIREMENTS.md but don't have detailed requirement files yet:
+### 3. User Interface (v0.1) 🟢
+**Status**: Completed  
+**Priority**: Medium  
+**Completion Date**: 2026-01-04
 
-### Medium Priority
-- [ ] **advanced-latex-support.md** (#7)
-  - Tables, figures, images
-  - References and labels
-  - Custom commands
-  - Should be implemented as feature modules after #4
+- [x] Monaco editor integration
+- [x] Three-pane layout (editor, JSON, preview)
+- [x] Parse button
+- [x] Generate PDF button
+- [x] Download PDF button
+- [x] Sample LaTeX document loaded on start
 
-- [ ] **error-handling.md** (#12)
-  - Status bar component
-  - Parse error highlighting
-  - User notifications
+---
 
-### Low Priority
-- [ ] **editor-enhancements.md** (#10)
-  - Keyboard shortcuts
-  - Auto-save
-  - Find/replace
-  - Theme switching
+## Infrastructure & Tooling (v0.2)
 
-- [ ] **json-export-import.md** (#11)
-  - Export JSON to file
-  - Import JSON from file
-  - JSON validation
+### 4. Modular Architecture ⚪
+**Status**: Pending  
+**Priority**: 🔥 CRITICAL (Highest)  
+**Requirement File**: `requirements/pending/modular-architecture.md`  
+**Depends on**: None  
+**Blocks**: #6, #7, #8, #9, #12, #21, #22, #23
 
-- [ ] **template-library.md** (#19)
-  - Pre-built templates
-  - Academic, resume, letter templates
-  - Custom template creation
+**Requirements**:
+- [ ] Convert to Web Components architecture
+- [ ] Create app-shell component
+- [ ] Extract Monaco editor to component
+- [ ] Extract JSON viewer to component
+- [ ] Extract PDF preview to component
+- [ ] Extract toolbar to component
+- [ ] Implement StateManager service
+- [ ] Implement EventBus service
+- [ ] Implement FeatureRegistry (plugin system)
+- [ ] Split parser into modular service
+- [ ] Split PDF generator into modular service
+- [ ] Each LaTeX feature as separate plugin module
 
-- [ ] **advanced-pdf-features.md** (#20)
-  - Table of contents
-  - Hyperlinks and bookmarks
-  - Headers/footers
+**Estimated Effort**: 11-16 hours  
+**Why Critical**: Enables plugin architecture where new LaTeX features can be added as independent modules without touching core code
 
-### Testing & Quality
-- [ ] **browser-compatibility-testing.md** (#13)
-  - Test plan for Chrome, Firefox, Safari, Edge
-  - Compatibility matrix
+### 5. GitHub Actions Deployment ⚪
+**Status**: Pending  
+**Priority**: High  
+**Requirement File**: `requirements/pending/github-pages-deployment.md`  
+**Depends on**: None  
+**Blocks**: None
 
-- [ ] **accessibility.md** (#14)
-  - WCAG compliance
-  - Keyboard navigation
-  - Screen reader support
+**Requirements**:
+- [ ] Create `.github/workflows/deploy.yml`
+- [ ] Configure GitHub Pages deployment
+- [ ] Deploy on push to main branch
+- [ ] Set up custom domain support (optional)
+- [ ] Add deployment status badge to README
 
-- [ ] **performance-optimization.md** (#15)
-  - Lazy loading
-  - Web workers
-  - Service workers
+**Estimated Effort**: 15-30 minutes
 
-### Documentation
-- [ ] **user-documentation.md** (#16)
-  - User guide
-  - LaTeX command reference
-  - FAQ
+### 22. Platform Portability Architecture ⚪
+**Status**: Pending  
+**Priority**: High  
+**Requirement File**: `requirements/pending/platform-portability.md`  
+**Depends on**: Should be implemented with #4  
+**Blocks**: #26 (Future VSCode Extension)
 
-- [ ] **developer-documentation.md** (#17)
-  - Architecture diagrams
-  - API documentation
-  - Contributing guide
+**Requirements**:
+- [ ] PlatformAdapter interface defined
+- [ ] WebAdapter implementation (full)
+- [ ] VSCodeAdapter stub (for future)
+- [ ] No browser APIs in core code
+- [ ] All file operations through adapter
+- [ ] All storage operations through adapter
+- [ ] All UI operations through adapter
+- [ ] Porting guide documented
 
-## 📋 Master Documents
+**Estimated Effort**: 2-3 hours (as part of #4)  
+**Why Important**: Enables future VSCode extension port with 90%+ code reuse
 
-- [x] **REQUIREMENTS.md** - Master requirements list
-- [x] **README.md** - Project overview
-- [x] **AGENTS.md** - LLM development guide
+### 24. Requirements Management CLI Tool ⚪
+**Status**: Pending  
+**Priority**: High  
+**Requirement File**: `requirements/pending/requirements-cli-tool.md`  
+**Depends on**: None  
+**Blocks**: None (but helps all development)
 
-## 🎯 Recommended Implementation Order
+**Requirements**:
+- [ ] CLI executable (`requirements` command)
+- [ ] Auto-generate requirement IDs
+- [ ] Interactive prompts with dropdowns
+- [ ] Dependency selection with "ID: Title"
+- [ ] Category/priority dropdowns
+- [ ] Validate requirement files
+- [ ] Dependency analysis
+- [ ] Critical path detection
+- [ ] LLM tool schema output
+- [ ] JSON mode for LLM agents
 
-Based on dependencies and priority:
+**Estimated Effort**: 8-12 hours  
+**Why Important**: Systematizes requirement creation, reduces human error, enables LLM agent integration
 
-1. **#4 - modular-architecture.md** 🔥 (HIGHEST - Blocks everything)
-2. **#5 - github-pages-deployment.md** (High - Enable public deployment)
-3. **#12 - error-handling.md** (Medium - Quality of life)
-4. **#6 - collapsible-json-viewer.md** (Medium - UX improvement)
-5. **#21 - bibliography-support.md** (Medium-High - Academic users)
-6. **#8 - better-math-support.md** (Medium - Academic users)
-7. **#7 - advanced-latex-support.md** (Medium - Should be feature modules)
-8. **#9 - custom-styling.md** (Low - Nice to have)
-9. **#10 - editor-enhancements.md** (Low - Quality of life)
+---
 
-## 📝 Notes
+## User Experience Enhancements
 
-- All files in **pending/** directory need to be created in the project
-- Files marked [x] have been generated and are ready to be saved
-- Files marked [ ] still need to be written
-- Priority should focus on #4 first as it enables the plugin architecture
-- #21 (Bibliography) is new and not in original REQUIREMENTS.md - should be added
-- After #4 is complete, new features can be added as independent modules
+### 6. Collapsible JSON Viewer ⚪
+**Status**: Pending  
+**Priority**: Medium  
+**Requirement File**: `requirements/pending/collapsible-json-viewer.md`  
+**Depends on**: #4  
+**Blocks**: None
 
-## 🔄 Next Actions
+**Requirements**:
+- [ ] JSON panel collapsed by default
+- [ ] Toggle button in panel header
+- [ ] Smooth collapse/expand animation (300ms)
+- [ ] State persists during session
+- [ ] Syntax highlighting for JSON
 
-1. Save all [x] marked requirement files to `requirements/pending/`
-2. Update REQUIREMENTS.md to include #21 (Bibliography Support)
-3. Begin implementation of #4 (Modular Architecture)
-4. Generate remaining [ ] marked requirement files as needed
+**Estimated Effort**: 2-3 hours
+
+### 23. LaTeX Syntax Highlighting ⚪
+**Status**: Pending  
+**Priority**: Medium  
+**Requirement File**: `requirements/pending/latex-syntax-highlighting.md`  
+**Depends on**: Monaco Editor loaded  
+**Blocks**: None
+
+**Requirements**:
+- [ ] LaTeX commands highlighted
+- [ ] Comments shown in muted color
+- [ ] Math mode visually distinct
+- [ ] Braces and brackets highlighted
+- [ ] Environment names highlighted
+- [ ] Monaco Monarch language definition
+- [ ] Custom color theme
+- [ ] Auto-closing pairs for {}, [], $
+
+**Estimated Effort**: 3-4 hours  
+**Why Important**: Quick win that significantly improves UX and makes editor feel professional
+
+### 10. Editor Enhancements ⚪
+**Status**: Pending  
+**Priority**: Low
+
+**Requirements**:
+- [ ] Keyboard shortcuts (Ctrl+S to download, etc.)
+- [ ] Auto-save to session state
+- [ ] Find and replace
+- [ ] Line numbers toggle
+- [ ] Minimap toggle
+- [ ] Theme switching (light/dark)
+
+---
+
+## Advanced Features
+
+### 7. Advanced LaTeX Support ⚪
+**Status**: Pending  
+**Priority**: Medium  
+**Depends on**: #4 (should be feature modules)
+
+**Requirements**:
+- [ ] Tables (`\begin{tabular}`)
+- [ ] Figures (`\begin{figure}`)
+- [ ] Images (`\includegraphics`)
+- [ ] References (`\ref{}`, `\label{}`)
+- [ ] Citations (`\cite{}`)
+- [ ] Custom commands (`\newcommand`)
+- [ ] Multi-column layout
+- [ ] Footnotes
+
+### 8. Better Math Rendering ⚪
+**Status**: Pending  
+**Priority**: Medium  
+**Requirement File**: `requirements/pending/better-math-support.md`  
+**Depends on**: #4
+
+**Requirements**:
+- [ ] Proper fraction rendering
+- [ ] Greek letters
+- [ ] Subscripts and superscripts
+- [ ] Square roots and radicals
+- [ ] Matrices
+- [ ] Custom math renderer (no external libs)
+
+**Estimated Effort**: 22-30 hours (phased implementation)  
+**Notes**: Must maintain no-build-tools constraint
+
+### 21. Bibliography and Citation Support ⚪
+**Status**: Pending  
+**Priority**: Medium-High  
+**Requirement File**: `requirements/pending/bibliography-support.md`  
+**Depends on**: #4  
+**Blocks**: None
+
+**Requirements**:
+- [ ] BibTeX/BibLaTeX file parsing
+- [ ] `\cite{}`, `\citep{}`, `\citet{}` commands
+- [ ] Multiple citation styles (APA, MLA, Chicago, IEEE)
+- [ ] Automatic bibliography generation
+- [ ] Citation formatting
+- [ ] `.bib` file upload
+- [ ] Zotero integration (VSCode version only)
+
+**Estimated Effort**: 10-14 hours  
+**Why Important**: Critical for academic users, killer feature for VSCode version with Zotero
+
+### 9. PDF Styling Options ⚪
+**Status**: Pending  
+**Priority**: Low  
+**Requirement File**: `requirements/pending/custom-styling.md`  
+**Depends on**: #4
+
+**Requirements**:
+- [ ] Font selection (serif, sans-serif, mono)
+- [ ] Font size adjustment
+- [ ] Margin control
+- [ ] Line spacing options
+- [ ] Color schemes
+- [ ] Page size (A4, Letter, etc.)
+- [ ] Style presets (Academic, Modern, Minimal)
+
+**Estimated Effort**: 6-8 hours
+
+### 11. JSON Export/Import ⚪
+**Status**: Pending  
+**Priority**: Low
+
+**Requirements**:
+- [ ] Export JSON to file
+- [ ] Import JSON from file
+- [ ] Direct JSON editing mode
+- [ ] JSON validation
+- [ ] Convert JSON back to LaTeX
+
+---
+
+## Quality & Testing
+
+### 12. Error Handling ⚪
+**Status**: Pending  
+**Priority**: Medium  
+**Depends on**: #4
+
+**Requirements**:
+- [ ] Status bar component for messages
+- [ ] Parse error highlighting
+- [ ] Friendly error messages
+- [ ] Warning for unsupported commands
+- [ ] Validation feedback
+
+### 13. Browser Compatibility Testing ⚪
+**Status**: Pending  
+**Priority**: High
+
+**Requirements**:
+- [ ] Test in Chrome 90+
+- [ ] Test in Firefox 88+
+- [ ] Test in Safari 14+
+- [ ] Test in Edge 90+
+- [ ] Document browser requirements
+
+### 14. Accessibility ⚪
+**Status**: Pending  
+**Priority**: Medium
+
+**Requirements**:
+- [ ] Keyboard navigation
+- [ ] ARIA labels
+- [ ] Screen reader support
+- [ ] High contrast mode
+- [ ] Focus indicators
+
+### 15. Performance Optimization ⚪
+**Status**: Pending  
+**Priority**: Low
+
+**Requirements**:
+- [ ] Lazy load Monaco editor
+- [ ] Debounce parse operations
+- [ ] Virtual scrolling for large documents
+- [ ] Web Worker for parsing
+- [ ] Service Worker for offline support
+
+---
+
+## Documentation
+
+### 16. User Documentation ⚪
+**Status**: Pending  
+**Priority**: Medium
+
+**Requirements**:
+- [ ] User guide
+- [ ] LaTeX command reference
+- [ ] Example documents
+- [ ] FAQ section
+- [ ] Video tutorial
+
+### 17. Developer Documentation ⚪
+**Status**: Pending  
+**Priority**: High
+
+**Requirements**:
+- [x] README.md
+- [x] AGENTS.md
+- [ ] Architecture diagrams
+- [ ] API documentation
+- [ ] Contributing guide
+- [ ] Component documentation
+
+---
+
+## Future Considerations
+
+### 18. Collaborative Features 🔴
+**Status**: Blocked (requires backend)
+
+**Requirements**:
+- Real-time collaboration
+- Document sharing
+- Version history
+- Comments and annotations
+
+**Notes**: Out of scope for current no-backend constraint
+
+### 19. Template Library ⚪
+**Status**: Pending  
+**Priority**: Low
+
+**Requirements**:
+- [ ] Pre-built document templates
+- [ ] Academic paper template
+- [ ] Resume template
+- [ ] Letter template
+- [ ] Presentation template
+- [ ] Custom template creation
+
+### 20. Advanced PDF Features ⚪
+**Status**: Pending  
+**Priority**: Low
+
+**Requirements**:
+- [ ] Table of contents generation
+- [ ] Hyperlinks
+- [ ] Bookmarks
+- [ ] Metadata embedding
+- [ ] Multi-page rendering with headers/footers
+
+### 26. VSCode Extension Port 🔴
+**Status**: Blocked  
+**Priority**: Medium (Future)  
+**Depends on**: #4, #22
+
+**Requirements**:
+- Port core engine to VSCode extension
+- Implement VSCodeAdapter fully
+- Add Zotero integration
+- Multi-file LaTeX project support
+- Workspace file access
+- Command palette commands
+
+**Notes**: Enabled by #22 (Platform Portability). Web version must be working first.
+
+---
+
+## Priority Queue
+
+### 🔥 Critical (Do First)
+1. **#4** - Modular Architecture (blocks 11+ requirements)
+2. **#22** - Platform Portability (implement with #4)
+
+### ⚠️ High Priority (Do Soon)
+3. **#5** - GitHub Pages Deployment
+4. **#24** - Requirements CLI Tool
+5. **#13** - Browser Compatibility Testing
+
+### ➡️ Medium Priority (Quick Wins)
+6. **#23** - LaTeX Syntax Highlighting (3-4 hours, big UX win)
+7. **#6** - Collapsible JSON Viewer
+8. **#12** - Error Handling
+9. **#21** - Bibliography Support
+
+### ⬇️ Medium-Low Priority
+10. **#8** - Better Math Rendering (large effort)
+11. **#7** - Advanced LaTeX Support
+12. **#16** - User Documentation
+
+### ⬇️ Low Priority
+13. **#9** - PDF Styling Options
+14. **#10** - Editor Enhancements
+15. **#11** - JSON Export/Import
+16. **#19** - Template Library
+
+---
+
+## Statistics
+
+- **Total Requirements**: 26
+- **Completed**: 3 (12%)
+- **In Progress**: 0 (0%)
+- **Pending**: 22 (85%)
+- **Blocked**: 2 (8%)
+
+**Estimated Total Effort**: ~90-120 hours
+
+---
+
+## Notes
+
+- All features must work without backend
+- No third-party libraries except Monaco and jsPDF
+- Maintain fast load times (<3s on slow connection)
+- Keep total bundle size under 5MB
+- Support modern browsers only (ES6+)
+- Design for VSCode portability from the start (#22)
+
+---
+
+## Changelog
+
+### 2026-01-04
+- Created initial requirements document
+- Documented v0.1 completed features
+- Outlined v0.2 refactoring plan
+- Added #4: Modular Architecture (CRITICAL)
+- Added #5: GitHub Pages deployment
+- Added #21: Bibliography support (NEW)
+- Added #22: Platform portability architecture (NEW)
+- Added #23: LaTeX syntax highlighting (NEW)
+- Added #24: Requirements CLI tool (NEW)
+- Added #26: VSCode extension port (Future)
+- Reorganized priority queue with critical path focus
