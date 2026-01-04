@@ -2,6 +2,7 @@ import { eventBus } from '../services/event-bus.js';
 import { stateManager } from '../services/state-manager.js';
 import { latexParser } from '../services/latex-parser.js';
 import { pdfGenerator } from '../services/pdf-generator.js';
+import { bibliographyFeature } from '../features/bibliography.js';
 
 export class Toolbar extends HTMLElement {
   constructor() {
@@ -44,6 +45,8 @@ export class Toolbar extends HTMLElement {
         <button id="parse-btn">Parse LaTeX</button>
         <button id="generate-pdf-btn">Generate PDF</button>
         <button id="download-pdf-btn">Download PDF</button>
+        <input type="file" id="bib-upload" accept=".bib" style="display: none;" />
+        <button id="upload-bib-btn">Upload .bib</button>
       </div>
     `;
   }
@@ -78,6 +81,25 @@ export class Toolbar extends HTMLElement {
         } else {
             alert('Generate PDF first!');
         }
+    });
+
+    this.shadowRoot.getElementById('upload-bib-btn').addEventListener('click', () => {
+        this.shadowRoot.getElementById('bib-upload').click();
+    });
+
+    this.shadowRoot.getElementById('bib-upload').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const bibContent = event.target.result;
+            bibliographyFeature.loadBibliography(bibContent);
+            eventBus.emit('bibliography:loaded');
+            alert('Bibliography loaded successfully!');
+        };
+        reader.readAsText(file);
     });
   }
 }
