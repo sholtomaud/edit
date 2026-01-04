@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaTeX to PDF Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            background: #1e1e1e;
+            color: #fff;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .toolbar {
+            background: #252526;
+            padding: 12px 20px;
+            border-bottom: 1px solid #3e3e42;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        
+        button:hover {
+            background: #1177bb;
+        }
+        
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .editor-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #3e3e42;
+        }
+        
+        .pane-header {
+            background: #2d2d30;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 1px solid #3e3e42;
+        }
+        
+        .preview-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1e1e1e;
+        }
+        
+        #editor {
+            flex: 1;
+        }
+        
+        #json-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow: auto;
+            flex: 1;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        #pdf-preview {
+            flex: 1;
+            background: #525252;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="toolbar">
+            <button id="parse-btn">Parse LaTeX</button>
+            <button id="generate-pdf-btn">Generate PDF</button>
+            <button id="download-pdf-btn">Download PDF</button>
+        </div>
+        
+        <div class="main-content">
+            <div class="editor-pane">
+                <div class="pane-header">LaTeX Editor</div>
+                <div id="editor"></div>
+            </div>
+            
+            <div class="editor-pane">
+                <div class="pane-header">JSON Output</div>
+                <div id="json-output">Parse LaTeX to see JSON structure...</div>
+            </div>
+            
+            <div class="preview-pane">
+                <div class="pane-header">PDF Preview</div>
+                <div id="pdf-preview">
+                    <div style="color: #999; font-size: 14px;">Generate PDF to see preview...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+    
+    <script>
+        // Initialize Monaco Editor
+        const monacoScript = document.createElement('script');
+        monacoScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js';
+        
+        require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' }});
+        
+        let editor;
+        let parsedData = null;
+        
+        require(['vs/editor/editor.main'], function() {
+            editor = monaco.editor.create(document.getElementById('editor'), {
+                value: `\\documentclass{article}
+\\usepackage{amsmath}
+\\usepackage{graphicx}
+
+\\title{Introduction to Quantum Computing}
+\\author{Dr. Sarah Chen}
+\\date{January 2026}
+
+\\begin{document}
+
+\\maketitle
+
+\\section{Introduction}
+Quantum computing represents a \\textbf{paradigm shift} in computational technology, leveraging the principles of quantum mechanics to process information in fundamentally new ways. Unlike classical computers that use bits as the basic unit of information, quantum computers use \\textit{quantum bits} or qubits.
+
+\\subsection{Historical Context}
+The concept of quantum computing was first introduced by physicist \\textbf{Richard Feynman} in 1982, who proposed that quantum systems could be used to simulate other quantum systems more efficiently than classical computers.
+
+\\section{Fundamental Concepts}
+
+\\subsection{Superposition}
+A qubit can exist in a superposition of states, mathematically represented as:
+
+\\begin{equation}
+|\\psi\\rangle = \\alpha|0\\rangle + \\beta|1\\rangle
+\\end{equation}
+
+where $\\alpha$ and $\\beta$ are complex probability amplitudes satisfying $|\\alpha|^2 + |\\beta|^2 = 1$.
+
+\\subsection{Entanglement}
+Quantum entanglement creates correlations between qubits that have no classical analogue. The famous Einstein-Podolsky-Rosen state is:
+
+\\begin{equation}
+|\\Phi^+\\rangle = \\frac{1}{\\sqrt{2}}(|00\\rangle + |11\\rangle)
+\\end{equation}
+
+\\section{Current Applications}
+Quantum computing shows promise in several domains:
+
+\\begin{itemize}
+\\item Cryptography and secure communication
+\\item Drug discovery and molecular simulation
+\\item Optimization problems in logistics
+\\item Machine learning and artificial intelligence
+\\item Financial modeling and risk analysis
+\\end{itemize}
+
+\\subsection{Quantum Algorithms}
+Several algorithms demonstrate quantum advantage:
+
+\\begin{enumerate}
+\\item Shor's algorithm for integer factorization
+\\item Grover's algorithm for database search
+\\item Quantum Fourier Transform
+\\item Variational Quantum Eigensolver
+\\end{enumerate}
+
+\\section{Challenges and Future Directions}
+Despite recent progress, significant challenges remain in scaling quantum computers. \\textit{Quantum decoherence} and error rates continue to limit the complexity of computations that can be reliably performed.
+
+The field is rapidly evolving, with major tech companies and research institutions investing heavily in quantum technologies. The race to achieve \\textbf{quantum supremacy} has driven innovation across hardware, software, and algorithm development.
+
+\\section{Conclusion}
+Quantum computing stands at the frontier of computational science, promising to revolutionize fields from cryptography to drug discovery. While practical, large-scale quantum computers remain years away, the foundational work being done today will shape the technological landscape of tomorrow.
+
+\\end{document}`,
+                language: 'latex',
+                theme: 'vs-dark',
+                automaticLayout: true,
+                fontSize: 14,
+                minimap: { enabled: false }
+            });
+        });
+
+        // LaTeX Parser - converts LaTeX to JSON
+        class LaTeXParser {
+            parse(latex) {
+                const doc = {
+                    type: 'document',
+                    metadata: {},
+                    content: []
+                };
+
+                // Extract metadata
+                doc.metadata.title = this.extractCommand(latex, 'title');
+                doc.metadata.author = this.extractCommand(latex, 'author');
+                doc.metadata.date = this.extractCommand(latex, 'date');
+
+                // Extract document content
+                const docContent = this.extractEnvironment(latex, 'document');
+                if (docContent) {
+                    doc.content = this.parseContent(docContent);
+                }
+
+                return doc;
+            }
+
+            extractCommand(text, cmd) {
+                const regex = new RegExp(`\\\\${cmd}\\{([^}]+)\\}`, 'i');
+                const match = text.match(regex);
+                return match ? match[1] : null;
+            }
+
+            extractEnvironment(text, env) {
+                const regex = new RegExp(`\\\\begin\\{${env}\\}([\\s\\S]*?)\\\\end\\{${env}\\}`, 'i');
+                const match = text.match(regex);
+                return match ? match[1] : null;
+            }
+
+            parseContent(content) {
+                const elements = [];
+                const lines = content.split('\n');
+                let i = 0;
+
+                while (i < lines.length) {
+                    const line = lines[i].trim();
+                    
+                    if (!line || line.startsWith('%')) {
+                        i++;
+                        continue;
+                    }
+
+                    // Check for section
+                    if (line.startsWith('\\section{')) {
+                        elements.push({
+                            type: 'section',
+                            level: 1,
+                            title: this.extractBraces(line)
+                        });
+                    }
+                    // Check for subsection
+                    else if (line.startsWith('\\subsection{')) {
+                        elements.push({
+                            type: 'section',
+                            level: 2,
+                            title: this.extractBraces(line)
+                        });
+                    }
+                    // Check for maketitle
+                    else if (line.includes('\\maketitle')) {
+                        elements.push({ type: 'maketitle' });
+                    }
+                    // Check for environments
+                    else if (line.startsWith('\\begin{')) {
+                        const envMatch = line.match(/\\begin\{(\w+)\}/);
+                        if (envMatch) {
+                            const envType = envMatch[1];
+                            const envContent = this.extractEnvironmentFromLines(lines, i, envType);
+                            elements.push(this.parseEnvironment(envType, envContent));
+                            // Skip to end of environment
+                            while (i < lines.length && !lines[i].includes(`\\end{${envType}}`)) {
+                                i++;
+                            }
+                        }
+                    }
+                    // Regular paragraph
+                    else if (line.length > 0) {
+                        elements.push({
+                            type: 'paragraph',
+                            content: this.parseInlineFormatting(line)
+                        });
+                    }
+
+                    i++;
+                }
+
+                return elements;
+            }
+
+            extractBraces(text) {
+                const match = text.match(/\{([^}]+)\}/);
+                return match ? match[1] : '';
+            }
+
+            extractEnvironmentFromLines(lines, startIdx, envType) {
+                let content = [];
+                let i = startIdx + 1;
+                
+                while (i < lines.length && !lines[i].includes(`\\end{${envType}}`)) {
+                    content.push(lines[i]);
+                    i++;
+                }
+                
+                return content.join('\n');
+            }
+
+            parseEnvironment(type, content) {
+                if (type === 'itemize' || type === 'enumerate') {
+                    const items = [];
+                    const lines = content.split('\n');
+                    
+                    for (const line of lines) {
+                        if (line.trim().startsWith('\\item')) {
+                            items.push(this.parseInlineFormatting(line.replace('\\item', '').trim()));
+                        }
+                    }
+                    
+                    return {
+                        type: 'list',
+                        ordered: type === 'enumerate',
+                        items: items
+                    };
+                }
+                
+                if (type === 'equation') {
+                    return {
+                        type: 'equation',
+                        numbered: true,
+                        content: content.trim()
+                    };
+                }
+
+                return {
+                    type: 'environment',
+                    name: type,
+                    content: content
+                };
+            }
+
+            parseInlineFormatting(text) {
+                let formatted = text;
+                const formats = [];
+
+                // Handle bold
+                const boldRegex = /\\textbf\{([^}]+)\}/g;
+                formatted = formatted.replace(boldRegex, (match, content) => {
+                    formats.push({ type: 'bold', content });
+                    return content;
+                });
+
+                // Handle italic
+                const italicRegex = /\\textit\{([^}]+)\}/g;
+                formatted = formatted.replace(italicRegex, (match, content) => {
+                    formats.push({ type: 'italic', content });
+                    return content;
+                });
+
+                // Handle inline math
+                const mathRegex = /\$([^$]+)\$/g;
+                formatted = formatted.replace(mathRegex, (match, content) => {
+                    formats.push({ type: 'math', content });
+                    return content;
+                });
+
+                return formats.length > 0 ? { text: formatted, formats } : formatted;
+            }
+        }
+
+        // PDF Generator - converts JSON to PDF
+        class PDFGenerator {
+            constructor() {
+                this.doc = null;
+                this.y = 20;
+                this.pageWidth = 210; // A4 width in mm
+                this.margin = 20;
+            }
+
+            generate(jsonData) {
+                // Check if jsPDF is loaded
+                if (!window.jspdf || !window.jspdf.jsPDF) {
+                    console.error('jsPDF not loaded yet');
+                    alert('PDF library is still loading. Please try again in a moment.');
+                    return null;
+                }
+                
+                const { jsPDF } = window.jspdf;
+                this.doc = new jsPDF();
+                this.y = 20;
+
+                // Render title page if metadata exists
+                if (jsonData.metadata.title) {
+                    this.renderTitle(jsonData.metadata);
+                    this.doc.addPage();
+                    this.y = 20;
+                }
+
+                // Render content
+                for (const element of jsonData.content) {
+                    this.renderElement(element);
+                }
+
+                return this.doc;
+            }
+
+            renderTitle(metadata) {
+                this.doc.setFontSize(24);
+                this.doc.text(metadata.title || 'Untitled', this.pageWidth / 2, 80, { align: 'center' });
+                
+                this.doc.setFontSize(14);
+                if (metadata.author) {
+                    this.doc.text(metadata.author, this.pageWidth / 2, 100, { align: 'center' });
+                }
+                
+                this.doc.setFontSize(12);
+                if (metadata.date) {
+                    this.doc.text(metadata.date, this.pageWidth / 2, 115, { align: 'center' });
+                }
+            }
+
+            renderElement(element) {
+                this.checkPageBreak(20);
+
+                switch (element.type) {
+                    case 'maketitle':
+                        // Skip, already rendered
+                        break;
+                    
+                    case 'section':
+                        this.renderSection(element);
+                        break;
+                    
+                    case 'paragraph':
+                        this.renderParagraph(element);
+                        break;
+                    
+                    case 'list':
+                        this.renderList(element);
+                        break;
+                    
+                    case 'equation':
+                        this.renderEquation(element);
+                        break;
+                }
+            }
+
+            renderSection(element) {
+                const fontSize = element.level === 1 ? 18 : 14;
+                this.doc.setFontSize(fontSize);
+                this.doc.setFont(undefined, 'bold');
+                this.doc.text(element.title, this.margin, this.y);
+                this.doc.setFont(undefined, 'normal');
+                this.y += fontSize / 2 + 5;
+            }
+
+            renderParagraph(element) {
+                this.doc.setFontSize(12);
+                const text = typeof element.content === 'string' ? element.content : element.content.text;
+                const lines = this.doc.splitTextToSize(text, this.pageWidth - 2 * this.margin);
+                
+                for (const line of lines) {
+                    this.checkPageBreak(7);
+                    this.doc.text(line, this.margin, this.y);
+                    this.y += 7;
+                }
+                
+                this.y += 5;
+            }
+
+            renderList(element) {
+                this.doc.setFontSize(12);
+                
+                element.items.forEach((item, idx) => {
+                    this.checkPageBreak(7);
+                    const bullet = element.ordered ? `${idx + 1}.` : '•';
+                    const text = typeof item === 'string' ? item : item.text;
+                    this.doc.text(`${bullet} ${text}`, this.margin + 5, this.y);
+                    this.y += 7;
+                });
+                
+                this.y += 5;
+            }
+
+            renderEquation(element) {
+                this.doc.setFontSize(12);
+                this.doc.setFont(undefined, 'italic');
+                this.doc.text(element.content, this.pageWidth / 2, this.y, { align: 'center' });
+                this.doc.setFont(undefined, 'normal');
+                this.y += 15;
+            }
+
+            checkPageBreak(height) {
+                if (this.y + height > 280) {
+                    this.doc.addPage();
+                    this.y = 20;
+                }
+            }
+        }
+
+        // Event Handlers
+        const parser = new LaTeXParser();
+        const generator = new PDFGenerator();
+        let pdfDoc = null;
+
+        document.getElementById('parse-btn').addEventListener('click', () => {
+            const latex = editor.getValue();
+            parsedData = parser.parse(latex);
+            document.getElementById('json-output').textContent = JSON.stringify(parsedData, null, 2);
+        });
+
+        document.getElementById('generate-pdf-btn').addEventListener('click', () => {
+            // Check if jsPDF is available
+            if (!window.jspdf || !window.jspdf.jsPDF) {
+                alert('PDF library is still loading. Please wait a moment and try again.');
+                return;
+            }
+            
+            if (!parsedData) {
+                const latex = editor.getValue();
+                parsedData = parser.parse(latex);
+                document.getElementById('json-output').textContent = JSON.stringify(parsedData, null, 2);
+            }
+
+            pdfDoc = generator.generate(parsedData);
+            
+            if (!pdfDoc) {
+                return; // Error already handled in generate()
+            }
+            
+            // Display PDF using blob URL
+            const pdfBlob = pdfDoc.output('blob');
+            const url = URL.createObjectURL(pdfBlob);
+            
+            // Create iframe to display PDF
+            const preview = document.getElementById('pdf-preview');
+            preview.innerHTML = `<iframe src="${url}" style="width: 100%; height: 100%; border: none; background: white;"></iframe>`;
+        });
+
+        document.getElementById('download-pdf-btn').addEventListener('click', () => {
+            if (pdfDoc) {
+                pdfDoc.save('document.pdf');
+            } else {
+                alert('Generate PDF first!');
+            }
+        });
+    </script>
+</body>
+</html>
