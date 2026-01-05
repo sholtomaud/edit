@@ -13,7 +13,7 @@ export class PDFGenerator {
         this.equationCounter = 1;
     }
 
-    generate(jsonData) {
+    async generate(jsonData) {
         if (typeof window.jspdf === 'undefined' || !window.jspdf.jsPDF) {
             console.error('jsPDF not loaded yet');
             alert('PDF library is still loading. Please try again in a moment.');
@@ -25,6 +25,27 @@ export class PDFGenerator {
         this.mathRenderer = new MathRenderer(this);
         this.y = 20;
         this.x = this.margin;
+        this.equationCounter = 1;
+
+        try {
+            const fontResponse = await fetch('/fonts/latinmodern-math.otf');
+            if (!fontResponse.ok) {
+                throw new Error('Failed to fetch font');
+            }
+            const fontBlob = await fontResponse.blob();
+            const reader = new FileReader();
+            const base64Font = await new Promise((resolve, reject) => {
+                reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(fontBlob);
+            });
+
+            this.doc.addFileToVFS('LatinModernMath.otf', base64Font);
+            this.doc.addFont('LatinModernMath.otf', 'LatinModernMath', 'normal');
+        } catch (error) {
+            console.error('Failed to load math font:', error);
+            alert('Failed to load math font. Mathematical symbols may not render correctly.');
+        }
 
         const makeTitleElement = jsonData.content.find(el => el.type === 'maketitle');
         if (makeTitleElement) {
