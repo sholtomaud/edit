@@ -59,7 +59,7 @@ export class Toolbar extends HTMLElement {
         eventBus.emit('latex:parsed', parsedData);
     });
 
-    this.shadowRoot.getElementById('generate-pdf-btn').addEventListener('click', async () => {
+    this.shadowRoot.getElementById('generate-pdf-btn').addEventListener('click', () => {
         let state = stateManager.getState();
         if (!state.json) {
             const parsedData = latexParser.parse(state.latex);
@@ -67,15 +67,10 @@ export class Toolbar extends HTMLElement {
             eventBus.emit('latex:parsed', parsedData);
             state = stateManager.getState();
         }
-        try {
-            const pdfDoc = await pdfGenerator.generate(state.json);
-            if (pdfDoc) {
-                stateManager.setState({ pdf: pdfDoc });
-                eventBus.emit('pdf:generated', pdfDoc);
-            }
-        } catch (error) {
-            console.error('PDF Generation Error:', error);
-            alert(`Could not generate PDF. Please check the console for details.\nError: ${error.message}`);
+        const pdfDoc = pdfGenerator.generate(state.json);
+        if (pdfDoc) {
+            stateManager.setState({ pdf: pdfDoc });
+            eventBus.emit('pdf:generated', pdfDoc);
         }
     });
 
