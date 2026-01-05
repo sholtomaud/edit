@@ -1,3 +1,7 @@
+[![Deploy Status](https://github.com/sholtomaud/edit/actions/workflows/deploy.yml/badge.svg)](https://github.com/sholtomaud/edit/actions/workflows/deploy.yml)
+
+🌐 **Live Demo**: [https://sholtomaud.github.io/edit/](https://sholtomaud.github.io/edit/)
+
 # LaTeX PDF Editor
 
 A browser-based LaTeX editor that parses LaTeX documents into JSON and renders them as PDFs, built entirely with native Web Components.
@@ -71,8 +75,8 @@ latex-pdf-editor/
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/latex-pdf-editor.git
-cd latex-pdf-editor
+git clone https://github.com/sholtomaud/edit.git
+cd edit
 ```
 
 2. Serve the files with any static server:
@@ -155,7 +159,7 @@ git commit -m "Your changes"
 git push origin main
 ```
 
-View at: `https://yourusername.github.io/latex-pdf-editor/`
+View at: `https://sholtomaud.github.io/edit/`
 
 ## Architecture Principles
 
