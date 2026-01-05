@@ -48,11 +48,8 @@ export class MathFeature extends FeatureBase {
             nodes.push({ type: 'text', content: line.substring(lastIndex) });
         }
 
-        // If only one node was found, and it's a math node, return it directly.
-        // Otherwise, return a paragraph-like structure containing the mixed content.
-        if (nodes.length === 1 && nodes[0].type === 'math') {
-            return nodes[0];
-        } else if (nodes.length > 0) {
+        // If any nodes were found, wrap them in a paragraph.
+        if (nodes.length > 0) {
             return { type: 'paragraph', content: nodes };
         }
 

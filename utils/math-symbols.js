@@ -29,4 +29,5 @@ export const MATH_OPERATORS = {
   'exists': '∃', 'in': '∈', 'notin': '∉',
   'subset': '⊂', 'supset': '⊃', 'subseteq': '⊆',
   'supseteq': '⊇', 'cap': '∩', 'cup': '∪',
+  'langle': '⟨', 'rangle': '⟩',
 };

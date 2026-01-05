@@ -85,8 +85,9 @@ export class PDFGenerator {
         this.doc.setFont(undefined, 'normal');
         this.x = this.margin;
         const lineHeight = 7;
+        const content = element.content || [];
 
-        for (const node of element.content) {
+        for (const node of content) {
             if (node.type === 'text') {
                 const words = node.content.split(' ');
                 for (const word of words) {
