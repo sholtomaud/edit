@@ -8,20 +8,22 @@ export class MathRenderer {
         this.fontSize = 12;
     }
 
-    render(element) {
+    render(element, x, y) {
         const { content, display } = element;
         this.fontSize = this.doc.getFontSize();
         const ast = this.parse(content);
 
         if (display === 'block') {
+            // Block math is always centered and advances the main y-cursor.
             this.pdfGenerator.checkPageBreak(20);
-            const x = this.pdfGenerator.pageWidth / 2;
-            this.renderNode(ast, x, this.pdfGenerator.y, this.fontSize, 'center');
+            const blockY = this.pdfGenerator.y;
+            const blockX = this.pdfGenerator.pageWidth / 2;
+            this.renderNode(ast, blockX, blockY, this.fontSize, 'center');
             this.pdfGenerator.y += this.getHeight(ast) + 10;
-        } else {
-            // Inline rendering is complex and will be handled later.
-            // For now, we'll just render it simply.
-            this.renderNode(ast, this.pdfGenerator.margin, this.pdfGenerator.y, this.fontSize);
+        } else { // 'inline' or unspecified
+            // Inline math is rendered at the given x, y without advancing the main cursor.
+            // The caller (e.g., renderParagraph) is responsible for advancing coordinates.
+            this.renderNode(ast, x, y, this.fontSize);
         }
     }
 
@@ -85,7 +87,10 @@ export class MathRenderer {
 
     renderNode(node, x, y, size, align = 'left') {
         this.doc.setFontSize(size);
-        this.doc.setFont(undefined, 'normal');
+
+        // Switch to the math font
+        const originalFont = this.doc.getFont();
+        this.doc.setFont('LatinModern-Math', 'normal');
 
         if (align === 'center') {
             x -= this.getWidth(node, size) / 2;
@@ -104,31 +109,39 @@ export class MathRenderer {
                 this.doc.text(node.value, x, y);
                 break;
             case 'fraction':
-                const numWidth = this.getWidth(node.numerator, size * 0.7);
-                const denWidth = this.getWidth(node.denominator, size * 0.7);
+                const numWidth = this.getWidth(node.numerator, size * 0.8);
+                const denWidth = this.getWidth(node.denominator, size * 0.8);
                 const maxWidth = Math.max(numWidth, denWidth);
 
-                this.renderNode(node.numerator, x + (maxWidth - numWidth) / 2, y - size * 0.2, size * 0.7);
+                this.renderNode(node.numerator, x + (maxWidth - numWidth) / 2, y - size * 0.35, size * 0.8);
                 this.doc.setLineWidth(0.2);
                 this.doc.line(x, y, x + maxWidth, y);
-                this.renderNode(node.denominator, x + (maxWidth - denWidth) / 2, y + size * 0.6, size * 0.7);
+                this.renderNode(node.denominator, x + (maxWidth - denWidth) / 2, y + size * 0.7, size * 0.8);
                 break;
             case 'superscript':
                 this.renderNode(node.base, x, y, size);
                 const baseWidth = this.getWidth(node.base, size);
-                this.renderNode(node.script, x + baseWidth, y - size * 0.4, size * 0.7);
+                this.renderNode(node.script, x + baseWidth, y - size * 0.5, size * 0.7);
                 break;
             case 'subscript':
                 this.renderNode(node.base, x, y, size);
                 const baseWidthSub = this.getWidth(node.base, size);
-                this.renderNode(node.script, x + baseWidthSub, y + size * 0.2, size * 0.7);
+                this.renderNode(node.script, x + baseWidthSub, y + size * 0.3, size * 0.7);
                 break;
         }
+
+        // Revert to the original font
+        this.doc.setFont(originalFont.fontName, originalFont.fontStyle);
     }
 
     getWidth(node, size) {
         if (!node) return 0;
+
+        const originalFont = this.doc.getFont();
+        this.doc.setFont('LatinModern-Math', 'normal');
         this.doc.setFontSize(size);
+
+        let width = 0;
         switch (node.type) {
             case 'expression':
                 return node.children.reduce((w, n) => w + this.getWidth(n, size), 0);
@@ -139,10 +152,14 @@ export class MathRenderer {
                 return Math.max(this.getWidth(node.numerator, size * 0.7), this.getWidth(node.denominator, size * 0.7));
             case 'superscript':
             case 'subscript':
-                return this.getWidth(node.base, size) + this.getWidth(node.script, size * 0.7);
+                width = this.getWidth(node.base, size) + this.getWidth(node.script, size * 0.7);
+                break;
             default:
-                return 0;
+                width = 0;
         }
+
+        this.doc.setFont(originalFont.fontName, originalFont.fontStyle);
+        return width;
     }
 
     getHeight(node, size = this.fontSize) {

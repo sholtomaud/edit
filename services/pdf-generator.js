@@ -11,9 +11,46 @@ export class PDFGenerator {
         this.pageWidth = 210; // A4 width in mm
         this.margin = 20;
         this.equationCounter = 1;
+        this.isFontInitialized = false;
     }
 
-    generate(jsonData) {
+    async _initializeFont() {
+        if (this.isFontInitialized) return;
+
+        try {
+            const fontKey = 'latin-modern-math-font-base64';
+            let base64Font = localStorage.getItem(fontKey);
+
+            if (!base64Font) {
+                const fontUrl = 'https://cdn.cdnfonts.com/s/16020/LatinModern-Math.ttf';
+                const response = await fetch(fontUrl, { mode: 'cors' });
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch font: ${response.statusText}`);
+                }
+                const fontBlob = await response.blob();
+                const reader = new FileReader();
+
+                base64Font = await new Promise((resolve, reject) => {
+                    reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(fontBlob);
+                });
+                localStorage.setItem(fontKey, base64Font);
+            }
+
+            this.doc.addFileToVFS('LatinModern-Math.ttf', base64Font);
+            this.doc.addFont('LatinModern-Math.ttf', 'LatinModern-Math', 'normal');
+            this.isFontInitialized = true;
+
+        } catch (error) {
+            console.error('Failed to initialize math font:', error);
+            localStorage.removeItem('latin-modern-math-font-base64');
+            // Re-throw the error to be caught by the caller
+            throw new Error('Failed to load the required math font. PDF generation aborted.');
+        }
+    }
+
+    async generate(jsonData) {
         if (typeof window.jspdf === 'undefined' || !window.jspdf.jsPDF) {
             console.error('jsPDF not loaded yet');
             alert('PDF library is still loading. Please try again in a moment.');
@@ -22,18 +59,20 @@ export class PDFGenerator {
 
         const { jsPDF } = window.jspdf;
         this.doc = new jsPDF();
+        await this._initializeFont();
+
         this.mathRenderer = new MathRenderer(this);
         this.y = 20;
         this.x = this.margin;
 
         const makeTitleElement = jsonData.content.find(el => el.type === 'maketitle');
         if (makeTitleElement) {
-             this.renderTitlePage(jsonData.metadata);
+            this.renderTitlePage(jsonData.metadata);
         }
 
         for (const element of jsonData.content) {
             if (element.type !== 'maketitle') {
-                 this.renderElement(element);
+                this.renderElement(element);
             }
         }
 
@@ -88,19 +127,28 @@ export class PDFGenerator {
 
         for (const node of element.content) {
             if (node.type === 'text') {
-                const words = node.content.split(' ');
-                for (const word of words) {
-                    const wordWidth = this.doc.getTextWidth(word + ' ');
-                    if (this.x + wordWidth > this.pageWidth - this.margin) {
+                const words = node.content.split(/\s+/);
+                for (let i = 0; i < words.length; i++) {
+                    const word = words[i];
+                    if (word.length === 0) continue;
+                    const wordWidth = this.doc.getTextWidth(word);
+                    const spaceWidth = i < words.length - 1 ? this.doc.getTextWidth(' ') : 0;
+
+                    if (this.x + wordWidth + spaceWidth > this.pageWidth - this.margin) {
                         this.y += lineHeight;
                         this.x = this.margin;
                     }
                     this.doc.text(word, this.x, this.y);
-                    this.x += wordWidth;
+                    this.x += wordWidth + spaceWidth;
                 }
             } else if (node.type === 'math') {
+                const mathWidth = this.mathRenderer.getWidth(this.mathRenderer.parse(node.content), 12) + 2;
+                if (this.x + mathWidth > this.pageWidth - this.margin) {
+                    this.y += lineHeight;
+                    this.x = this.margin;
+                }
                 this.mathRenderer.render(node, this.x, this.y);
-                this.x += this.mathRenderer.getWidth(this.mathRenderer.parse(node.content), 12) + 2;
+                this.x += mathWidth;
             }
         }
         this.y += lineHeight;
@@ -130,19 +178,17 @@ export class PDFGenerator {
     }
 
     renderMath(element) {
-        this.mathRenderer.render(element);
+        // This is for block-level math from the main loop
+        this.mathRenderer.render(element); // `render` handles the y-cursor advancement
     }
 
     renderEquation(element) {
         this.doc.setFontSize(12);
-        const parsedMath = this.mathRenderer.parse(element.content);
-        const mathWidth = this.mathRenderer.getWidth(parsedMath, 12);
-        const mathX = (this.pageWidth - mathWidth) / 2;
 
         this.checkPageBreak(10); // Check for page break before rendering
 
-        // Render the math content
-        this.mathRenderer.render({ content: element.content, type: 'math' }, mathX, this.y);
+        // Let the math renderer handle positioning and rendering
+        this.mathRenderer.render({ content: element.content, display: 'block' });
 
         // Render the equation number
         if (element.numbered) {
