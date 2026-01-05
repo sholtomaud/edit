@@ -18,34 +18,26 @@ export class PDFGenerator {
         if (this.isFontInitialized) return;
 
         try {
-            const fontKey = 'latin-modern-math-font-base64';
-            let base64Font = localStorage.getItem(fontKey);
-
-            if (!base64Font) {
-                const fontUrl = 'https://cdn.cdnfonts.com/s/16020/LatinModern-Math.ttf';
-                const response = await fetch(fontUrl, { mode: 'cors' });
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch font: ${response.statusText}`);
-                }
-                const fontBlob = await response.blob();
-                const reader = new FileReader();
-
-                base64Font = await new Promise((resolve, reject) => {
-                    reader.onloadend = () => resolve(reader.result.split(',')[1]);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(fontBlob);
-                });
-                localStorage.setItem(fontKey, base64Font);
+            const fontUrl = '/fonts/latinmodern-math.otf';
+            const response = await fetch(fontUrl);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch local font: ${response.statusText}`);
             }
+            const fontBlob = await response.blob();
+            const reader = new FileReader();
 
-            this.doc.addFileToVFS('LatinModern-Math.ttf', base64Font);
-            this.doc.addFont('LatinModern-Math.ttf', 'LatinModern-Math', 'normal');
+            const base64Font = await new Promise((resolve, reject) => {
+                reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(fontBlob);
+            });
+
+            this.doc.addFileToVFS('latinmodern-math.otf', base64Font);
+            this.doc.addFont('latinmodern-math.otf', 'LatinModern-Math', 'normal');
             this.isFontInitialized = true;
 
         } catch (error) {
             console.error('Failed to initialize math font:', error);
-            localStorage.removeItem('latin-modern-math-font-base64');
-            // Re-throw the error to be caught by the caller
             throw new Error('Failed to load the required math font. PDF generation aborted.');
         }
     }
