@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Build, Test, and Deploy to GitHub Pages
 
 on:
   push:
@@ -6,23 +6,14 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    permissions:
-      pages: write
-      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # This project is a vanilla JavaScript application with no build process.
-      # The files are served statically as-is, so no build step is required.
-
-      # There is no testing framework in place for this project.
-      # Therefore, a test step is not included in this workflow.
+      - name: Build placeholder
+        run: echo "This project is a vanilla JavaScript application with no build process."
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -33,6 +24,23 @@ jobs:
           # The entire repository is uploaded as the artifact because there is no build process.
           path: .
 
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Test placeholder
+        run: echo "There is no testing framework in place for this project."
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
