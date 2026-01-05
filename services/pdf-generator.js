@@ -10,6 +10,7 @@ export class PDFGenerator {
         this.x = 20;
         this.pageWidth = 210; // A4 width in mm
         this.margin = 20;
+        this.equationCounter = 1;
     }
 
     generate(jsonData) {
@@ -130,6 +131,29 @@ export class PDFGenerator {
 
     renderMath(element) {
         this.mathRenderer.render(element);
+    }
+
+    renderEquation(element) {
+        this.doc.setFontSize(12);
+        const parsedMath = this.mathRenderer.parse(element.content);
+        const mathWidth = this.mathRenderer.getWidth(parsedMath, 12);
+        const mathX = (this.pageWidth - mathWidth) / 2;
+
+        this.checkPageBreak(10); // Check for page break before rendering
+
+        // Render the math content
+        this.mathRenderer.render({ content: element.content, type: 'math' }, mathX, this.y);
+
+        // Render the equation number
+        if (element.numbered) {
+            const equationNumberStr = `(${this.equationCounter})`;
+            const numberX = this.pageWidth - this.margin - this.doc.getTextWidth(equationNumberStr) - 5; // Add some padding
+            this.doc.text(equationNumberStr, numberX, this.y);
+            this.equationCounter++;
+        }
+
+        this.y += 10; // Spacing after equation
+        this.y += 5; // Paragraph spacing
     }
 
     checkPageBreak(height) {
