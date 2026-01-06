@@ -28,7 +28,7 @@ export class PDFGenerator {
         this.equationCounter = 1;
 
         try {
-            const fontResponse = await fetch('/fonts/latinmodern-math.otf');
+            const fontResponse = await fetch('fonts/latinmodern-math.otf');
             if (!fontResponse.ok) {
                 throw new Error('Failed to fetch font');
             }
