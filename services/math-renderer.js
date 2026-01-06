@@ -68,14 +68,18 @@ export class MathRenderer {
             } else if (token === '_') {
                 return { type: 'subscript', script: parseGroup() };
             }
-            return { type: 'text', value: token };
+            return { type: 'symbol', value: token };
         };
 
         const nodes = [];
         while(index < tokens.length) {
             const nextNode = parseToken();
             if (nextNode.type === 'superscript' || nextNode.type === 'subscript') {
-                nextNode.base = nodes.pop();
+                if (nodes.length > 0) {
+                    nextNode.base = nodes.pop();
+                } else {
+                    nextNode.base = { type: 'text', value: '' };
+                }
                 nodes.push(nextNode);
             } else {
                 nodes.push(nextNode);
