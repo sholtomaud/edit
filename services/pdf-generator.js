@@ -32,13 +32,11 @@ export class PDFGenerator {
             if (!fontResponse.ok) {
                 throw new Error('Failed to fetch font');
             }
-            const fontBlob = await fontResponse.blob();
-            const reader = new FileReader();
-            const base64Font = await new Promise((resolve, reject) => {
-                reader.onloadend = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = reject;
-                reader.readAsDataURL(fontBlob);
-            });
+            const fontBuffer = await fontResponse.arrayBuffer();
+            const base64Font = btoa(
+                new Uint8Array(fontBuffer)
+                    .reduce((data, byte) => data + String.fromCharCode(byte), '')
+            );
 
             this.doc.addFileToVFS('LatinModernMath.otf', base64Font);
             this.doc.addFont('LatinModernMath.otf', 'LatinModernMath', 'normal');
