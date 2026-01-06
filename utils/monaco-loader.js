@@ -6,9 +6,9 @@ export function loadMonaco() {
         }
 
         const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js';
+        script.src = 'libs/loader.min.js';
         script.onload = () => {
-            require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' }});
+            require.config({ paths: { 'vs': 'libs/vs' }});
             require(['vs/editor/editor.main'], (monaco) => {
                 window.monaco = monaco;
                 resolve(monaco);
