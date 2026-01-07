@@ -60,13 +60,57 @@ latex-pdf-editor/
 ├── config/ # Configuration files
 │ ├── latex-examples.js # Sample docs
 │ └── parser-config.js # Parser rules
+├── tests/ # Test files
+│   ├── index.html # Test runner
+│   ├── test-framework.js # Micro testing framework
+│   ├── test-framework.css # Styles for test results
+│   └── unit/ # Unit tests
 └── requirements/ # Feature specifications
 ├── REQUIREMENTS.md # Master list (Source of Truth)
 ├── pending/ # Todo features
 ├── completed/ # Done features
 └── blocked/ # Blocked features
 
+## Testing
 
+This project uses a lightweight, browser-based testing framework. There is no build step or test runner required.
+
+### Running Tests
+
+1.  **Start a web server** in the root of the project.
+    ```bash
+    python3 -m http.server
+    ```
+2.  **Open the test runner** in your browser: [http://localhost:8000/tests/](http://localhost:8000/tests/)
+
+The test results will be displayed on the page.
+
+### Writing Tests
+
+1.  **Create a new test file** in the appropriate subdirectory of `tests/`. For example, a new unit test for a service would go in `tests/unit/`.
+2.  **Import the necessary modules** from the application's source code. Use relative paths.
+3.  **Write your test cases** using the `it()` and `assertEqual()` helper functions.
+
+**Example Test File (`tests/unit/example.test.js`):**
+
+```javascript
+import { myUtility } from '../../utils/my-utility.js';
+
+it('should correctly process the input', () => {
+    const input = '...';
+    const expected = '...';
+    const result = myUtility(input);
+    assertEqual(result, expected);
+});
+```
+
+4.  **Add your new test file** to the `tests/index.html` file so it will be included when the tests are run.
+
+```html
+<!-- Load test files -->
+<script type="module" src="unit/latex-parser.test.js"></script>
+<script type="module" src="unit/example.test.js"></script> <!-- Add this line -->
+```
 
 ## Development Workflow
 
